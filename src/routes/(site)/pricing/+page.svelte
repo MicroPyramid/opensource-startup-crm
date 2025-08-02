@@ -23,10 +23,10 @@
   } from '@lucide/svelte';
 
   /** @type {number|null} */
-  let activeFaq = null;
-  let teamSize = 5;
-  let selectedCompetitor = "Enterprise CRM A";
-  let calculatedSavings = 1500;
+  let activeFaq = $state(null);
+  let teamSize = $state(5);
+  let selectedCompetitor = $state("Enterprise CRM A");
+  let calculatedSavings = $state(1500);
 
   /**
    * @param {number} index
@@ -45,7 +45,9 @@
     }
   }
 
-  $: if (teamSize && selectedCompetitor) updateSavings();
+  $effect(() => {
+    if (teamSize && selectedCompetitor) updateSavings();
+  });
 </script>
 
 <svelte:head>

@@ -1,6 +1,6 @@
 <script>
     import { enhance } from '$app/forms';
-    import { page } from '$app/stores';
+    import { page } from '$app/state';
     import { ArrowLeft, User, Mail, Phone, Building, MapPin, FileText, Save } from '@lucide/svelte';
     import { validatePhoneNumber } from '$lib/utils/phone.js';
     
@@ -11,7 +11,7 @@
     let phoneError = $state('');
     
     // Get accountId from URL parameters
-    const accountId = $page.url.searchParams.get('accountId');
+    const accountId = page.url.searchParams.get('accountId');
     
     // Form values with defaults from form data if validation failed
     let formValues = $state({

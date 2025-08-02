@@ -14,13 +14,13 @@
 		Trash2
 	} from '@lucide/svelte';
 
-	/** @type {{ organization: any, users: any[], user: { id: string } }} */
-	export let data;
+	/** @type {{ data: { organization: any, users: any[], user: { id: string } } }} */
+	let { data } = $props();
 	/** @type {any} */
 	let org = data.organization;
-	let editing = false;
+	let editing = $state(false);
 	/** @type {{ name: string, domain: string, description: string }} */
-	let formOrg = { name: org?.name || '', domain: org?.domain || '', description: org?.description || '' };
+	let formOrg = $state({ name: org?.name || '', domain: org?.domain || '', description: org?.description || '' });
 	
 	function startEdit() {
 		formOrg = { name: org?.name || '', domain: org?.domain || '', description: org?.description || '' };
@@ -34,7 +34,7 @@
 	// Get logged-in user id from data (must be provided by server load)
 	let loggedInUserId = data.user?.id;
 	/** @type {Array<{id: string, name: string, email: string, role: string, joined: string, avatar: string, isSelf: boolean, editingRole: boolean}>} */
-	let users = Array.isArray(data.users)
+	let users = $state(Array.isArray(data.users)
 		? data.users.map((u) => ({
 				id: u.user.id,
 				name: u.user.name || u.user.email,
@@ -49,7 +49,7 @@
 				isSelf: loggedInUserId === u.user.id,
 				editingRole: false
 			}))
-		: [];
+		: []);
 
 	// Map roles to icons (only ADMIN and USER exist in schema)
 	/** @type {Record<string, any>} */

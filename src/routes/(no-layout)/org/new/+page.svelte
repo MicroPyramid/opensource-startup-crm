@@ -4,15 +4,17 @@
     import { goto } from '$app/navigation';
     import { Building2, ArrowLeft, Check, AlertCircle } from '@lucide/svelte';
   
-    export let form; // This contains the result of your form action
+    let { form } = $props(); // This contains the result of your form action
     
     // Handle form submission success
-    $: if (form?.data) {
-        // Redirect after a short delay to show success message
-        setTimeout(() => {
-            goto('/org');
-        }, 1500);
-    }
+    $effect(() => {
+        if (form?.data) {
+            // Redirect after a short delay to show success message
+            setTimeout(() => {
+                goto('/org');
+            }, 1500);
+        }
+    });
 </script>
 
 <div class="min-h-screen bg-gray-50 px-4 py-8">

@@ -23,21 +23,20 @@
       Target
     } from '@lucide/svelte';
 
-    /** @type {import('./$types').ActionData} */
-    export let form;
-    export let data;
+    /** @type {{ form: import('./$types').ActionData, data: any }} */
+    let { form, data } = $props();
     
     // Toast state
-    let showToast = false;
-    let toastMessage = '';
-    let toastType = 'success'; // 'success' | 'error'
-    let phoneError = '';
+    let showToast = $state(false);
+    let toastMessage = $state('');
+    let toastType = $state('success'); // 'success' | 'error'
+    let phoneError = $state('');
 
     /**
      * Object holding the form fields.
      * @type {Record<string, string>}
      */
-    let formData = {
+    let formData = $state({
       lead_title: '',
       opportunity_amount: '',
       website: '',
@@ -70,13 +69,13 @@
       referral_source: '',
       last_contacted: '',
       next_follow_up: ''
-    };
+    });
   
     /**
      * Object to store field errors.
      * @type {Record<string, string>}
      */
-    let errors = {};
+    let errors = $state({});
     
     /**
      * Handles changes to form inputs
@@ -156,7 +155,7 @@
     }
   
     // Submitting indicator
-    let isSubmitting = false;
+    let isSubmitting = $state(false);
     
     /**
      * Resets the form to its initial state

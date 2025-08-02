@@ -1,9 +1,9 @@
 <script lang="ts">
   import { Briefcase, Edit3, Trash2, Clock, User, Building, Calendar, AlertCircle, MessageCircle, Send, CheckCircle, RotateCcw, XCircle } from '@lucide/svelte';
   
-  export let data;
-  let comment = '';
-  let errorMsg = '';
+  let { data } = $props();
+  let comment = $state('');
+  let errorMsg = $state('');
   
   function getPriorityColor(priority: string) {
     switch (priority) {
@@ -33,7 +33,7 @@
   }
   
   // Reactive declarations for components
-  $: StatusIcon = getStatusIcon(data.caseItem.status);
+  let StatusIcon = $derived(getStatusIcon(data.caseItem.status));
 </script>
 
 <section class="min-h-screen bg-gray-50 dark:bg-gray-900">

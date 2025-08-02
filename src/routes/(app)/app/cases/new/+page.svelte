@@ -1,14 +1,14 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import { FolderOpen } from '@lucide/svelte';
-  export let data;
-  let title = '';
-  let description = '';
-  let accountId = data.preSelectedAccountId || '';
-  let dueDate = '';
-  let assignedId = '';
-  let priority = 'Medium';
-  let errorMsg = '';
+  let { data } = $props();
+  let title = $state('');
+  let description = $state('');
+  let accountId = $state(data.preSelectedAccountId || '');
+  let dueDate = $state('');
+  let assignedId = $state('');
+  let priority = $state('Medium');
+  let errorMsg = $state('');
 </script>
 
 <div class="h-screen bg-gray-50/50 dark:bg-gray-900/50 overflow-hidden">

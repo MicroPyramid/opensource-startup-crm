@@ -3,16 +3,15 @@
   import { enhance } from '$app/forms';
   import { ArrowLeft, Edit3, Calendar, User, Building2, MessageSquare, Send } from '@lucide/svelte';
   
-  export let data;
-  /** @type {import('./$types').ActionData} */
-  export let form;
+  /** @type {{ data: any, form: import('./$types').ActionData }} */
+  let { data, form } = $props();
 
   // Reactive assignment for task to allow modifications in edit mode
   /** @type {any} */
-  $: task = data.task;
+  let task = $derived(data.task);
   // Comments are now part of the task object from the server
 
-  let newComment = '';
+  let newComment = $state('');
 
   // The addComment function is no longer needed here,
   // form submission with `enhance` will handle it.

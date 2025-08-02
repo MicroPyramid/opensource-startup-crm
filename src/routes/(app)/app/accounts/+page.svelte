@@ -1,16 +1,17 @@
 <script>
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import { goto } from '$app/navigation';
   import { Search, Plus, Eye, Edit, Phone, MapPin, Calendar, Users, TrendingUp, Building2, Globe, DollarSign, ChevronUp, ChevronDown, Filter } from '@lucide/svelte';
   
-  export let data;
+  let { data } = $props();
   
-  let { accounts, pagination } = data;
-  let sortField = $page.url.searchParams.get('sort') || 'name';
-  let sortOrder = $page.url.searchParams.get('order') || 'asc';
-  let isLoading = false;
-  let statusFilter = $page.url.searchParams.get('status') || 'all';
-  let searchQuery = $page.url.searchParams.get('q') || '';
+  let accounts = $state(data.accounts);
+  let pagination = $state(data.pagination);
+  let sortField = $state(page.url.searchParams.get('sort') || 'name');
+  let sortOrder = $state(page.url.searchParams.get('order') || 'asc');
+  let isLoading = $state(false);
+  let statusFilter = $state(page.url.searchParams.get('status') || 'all');
+  let searchQuery = $state(page.url.searchParams.get('q') || '');
   /** @type {NodeJS.Timeout | undefined} */
   let searchTimeout;
   
@@ -21,7 +22,7 @@
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
       // eslint-disable-next-line svelte/prefer-svelte-reactivity
-      const params = new URLSearchParams($page.url.searchParams);
+      const params = new URLSearchParams(page.url.searchParams);
       if (value.trim()) {
         params.set('q', value.trim());
       } else {
@@ -35,7 +36,7 @@
   function updateQueryParams() {
     isLoading = true;
     // eslint-disable-next-line svelte/prefer-svelte-reactivity
-    const params = new URLSearchParams($page.url.searchParams);
+    const params = new URLSearchParams(page.url.searchParams);
     params.set('sort', sortField);
     params.set('order', sortOrder);
     params.set('status', statusFilter);
@@ -51,7 +52,7 @@
     if (newPage < 1 || newPage > pagination.totalPages) return;
     
     // eslint-disable-next-line svelte/prefer-svelte-reactivity
-    const params = new URLSearchParams($page.url.searchParams);
+    const params = new URLSearchParams(page.url.searchParams);
     params.set('page', newPage.toString());
     goto(`?${params.toString()}`, { keepFocus: true });
   }
@@ -95,11 +96,11 @@
   }
   
   // Update data when it changes from the server
-  $: {
+  $effect(() => {
     accounts = data.accounts;
     pagination = data.pagination;
     isLoading = false;
-  }
+  });
 </script>
 
 <div class="p-6 bg-white dark:bg-gray-900 min-h-screen">

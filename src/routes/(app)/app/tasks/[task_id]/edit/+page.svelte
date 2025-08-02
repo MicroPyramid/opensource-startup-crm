@@ -1,20 +1,19 @@
 <script>
     import { enhance } from '$app/forms';
     import { goto } from '$app/navigation';
-    import { page } from '$app/stores';
+    import { page } from '$app/state';
     import { X, Save, Calendar, User, Building, AlertCircle, CheckCircle } from '@lucide/svelte';
+	import { onMount } from 'svelte';
 
-    /** @type {import('./$types').PageData} */
-    export let data;
-    
-    /** @type {import('./$types').ActionData} */
-    export let form;
+    /** @type {{ data: import('./$types').PageData, form: import('./$types').ActionData }} */
+    let { data, form } = $props();
 
     // Reactive task data for the form
-    let task = { ...data.task }; // Create a copy to avoid mutating prop directly initially
+    let task = $state({ ...data.task }); // Create a copy to avoid mutating prop directly initially
     
     // Ensure dueDate is in YYYY-MM-DD for the input, or empty string if null
-    let dueDateString = '';
+    let dueDateString = $state('');
+    onMount(() => {
     if (task.dueDate) {
         /** @type {any} */
         const dateValue = task.dueDate;
@@ -22,9 +21,10 @@
             dueDateString = dateValue.split('T')[0];
         } else if (dateValue instanceof Date) {
             dueDateString = dateValue.toISOString().split('T')[0];
+            }
         }
-    }
-    task = { ...task, dueDate: dueDateString };
+        task = { ...task, dueDate: dueDateString };
+    });
 
     const users = data.users;
     const accounts = data.accounts;

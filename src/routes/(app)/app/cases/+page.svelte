@@ -1,23 +1,23 @@
 <script lang="ts">
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import { goto } from '$app/navigation';
   import { Briefcase, Plus, Filter, X } from '@lucide/svelte';
   
-  export let data;
-  let statusFilter = '';
-  let assignedFilter = '';
-  let accountFilter = '';
+  let { data } = $props();
+  let statusFilter = $state('');
+  let assignedFilter = $state('');
+  let accountFilter = $state('');
 
   // Use options from server data
   const statusOptions = data.statusOptions;
   const assignedOptions = data.allUsers.map((u: any) => u.name);
   const accountOptions = data.allAccounts.map((a: any) => a.name);
 
-  $: filteredCases = data.cases.filter((c: any) =>
+  let filteredCases = $derived(data.cases.filter((c: any) =>
     (!statusFilter || c.status === statusFilter) &&
     (!assignedFilter || c.owner?.name === assignedFilter) &&
     (!accountFilter || c.account?.name === accountFilter)
-  );
+  ));
 
   function statusColor(status: string) {
     return status === 'OPEN' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-700' :
@@ -46,7 +46,7 @@
     onFilterChange();
   }
 
-  $: hasActiveFilters = statusFilter || assignedFilter || accountFilter;
+  let hasActiveFilters = $derived(statusFilter || assignedFilter || accountFilter);
 </script>
 
 <div class="min-h-screen bg-slate-50 dark:bg-slate-900">

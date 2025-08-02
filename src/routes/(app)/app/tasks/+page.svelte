@@ -1,6 +1,6 @@
 <script>
   // Loads boards from server
-  export let data;
+  let { data } = $props();
 </script>
 
 <div class="board-bg">

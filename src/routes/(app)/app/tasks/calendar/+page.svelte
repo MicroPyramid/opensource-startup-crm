@@ -1,10 +1,10 @@
 <script>
   import { Calendar, ChevronLeft, ChevronRight, Clock, AlertCircle, CheckCircle2, Circle } from '@lucide/svelte';
   
-  export let data;
+  let { data } = $props();
   let today = new Date();
-  let currentDate = new Date(today);
-  let selectedDate = today.toISOString().slice(0, 10);
+  let currentDate = $state(new Date(today));
+  let selectedDate = $state(today.toISOString().slice(0, 10));
 
   // Group tasks by due date (YYYY-MM-DD)
   /** @type {Record<string, Array<{id: string, title: string, description: string, type: string, status: string, priority: string}>>} */
@@ -27,21 +27,21 @@
   }
 
   // Calendar logic
-  $: year = currentDate.getFullYear();
-  $: month = currentDate.getMonth();
-  $: monthStart = new Date(year, month, 1);
-  $: monthEnd = new Date(year, month + 1, 0);
-  $: startDay = monthStart.getDay();
-  $: daysInMonth = monthEnd.getDate();
-  $: calendar = (() => {
+  const year = $derived(currentDate.getFullYear());
+  const month = $derived(currentDate.getMonth());
+  const monthStart = $derived(new Date(year, month, 1));
+  const monthEnd = $derived(new Date(year, month + 1, 0));
+  const startDay = $derived(monthStart.getDay());
+  const daysInMonth = $derived(monthEnd.getDate());
+  const calendar = $derived.by(() => {
     let cal = [];
     for (let i = 0; i < startDay; i++) cal.push(null);
     for (let d = 1; d <= daysInMonth; d++) cal.push(new Date(Date.UTC(year, month, d)));
     while (cal.length % 7 !== 0) cal.push(null);
     return cal;
-  })();
+  });
 
-  $: monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'];
   
   /**
@@ -118,16 +118,16 @@
   }
 
   // Calculate monthly stats
-  $: monthlyTasks = Object.keys(tasksByDate).filter(dateStr => {
+  const monthlyTasks = $derived(Object.keys(tasksByDate).filter(dateStr => {
     const taskDate = new Date(dateStr);
     return taskDate.getFullYear() === year && taskDate.getMonth() === month;
-  });
+  }));
 
-  $: totalMonthlyTasks = monthlyTasks.reduce((total, dateStr) => {
+  const totalMonthlyTasks = $derived(monthlyTasks.reduce((total, dateStr) => {
     return total + tasksByDate[dateStr].length;
-  }, 0);
+  }, 0));
 
-  $: selectedTasks = tasksByDate[selectedDate] || [];
+  const selectedTasks = $derived(tasksByDate[selectedDate] || []);
 </script>
 
 <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4 sm:p-6 lg:p-8">

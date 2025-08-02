@@ -1,6 +1,5 @@
 <script>
 	import '../../../app.css';
-	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
 
     import imgGoogle from '$lib/assets/images/google.svg';
@@ -17,10 +16,10 @@
         Star
     } from '@lucide/svelte';
     
-    export let data;
+    let { data } = $props();
 
-    let mounted = false;
-    let isLoading = false;
+    let mounted = $state(false);
+    let isLoading = $state(false);
 
     const features = [
         { icon: Users, text: "Unlimited Contacts" },
@@ -36,7 +35,7 @@
         "Self-Hostable Solution"
     ];
 
-    onMount(() => {
+    $effect(() => {
         mounted = true;
     });
 
@@ -191,7 +190,7 @@
                                     <!-- Google Sign In Button -->
                                     <div in:fade="{{ duration: 600, delay: 600 }}">
                                         <a href="{data['google_url']}"
-                                           onclick={handleGoogleLogin}
+                                           onclick={() => handleGoogleLogin()}
                                            class="group w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 text-gray-800 font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-blue-200 relative overflow-hidden">
                                             
                                             <!-- Button Background Effect -->

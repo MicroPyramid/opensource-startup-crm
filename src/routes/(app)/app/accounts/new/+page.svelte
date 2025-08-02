@@ -20,14 +20,13 @@
     Hash
   } from '@lucide/svelte';
 
-  /** @type {import('./$types').ActionData} */
-  export let form;
-  export let data;
+  /** @type {{ form: import('./$types').ActionData, data: any }} */
+  let { form, data } = $props();
   
   // Toast state
-  let showToast = false;
-  let toastMessage = '';
-  let toastType = 'success'; // 'success' | 'error'
+  let showToast = $state(false);
+  let toastMessage = $state('');
+  let toastType = $state('success'); // 'success' | 'error'
   
   /**
    * Object holding the form fields.
@@ -51,7 +50,7 @@
    *   sicCode: string;
    * }}
    */
-  let formData = {
+  let formData = $state({
     name: '',
     type: '',
     industry: '',
@@ -69,13 +68,13 @@
     tickerSymbol: '',
     rating: '',
     sicCode: ''
-  };
+  });
 
   /**
    * Object to store field errors.
    * @type {Record<string, string>}
    */
-  let errors = {};
+  let errors = $state({});
   
   /**
    * Handles changes to form inputs
@@ -132,7 +131,7 @@
   }
 
   // Submitting indicator
-  let isSubmitting = false;
+  let isSubmitting = $state(false);
   
   /**
    * Resets the form to its initial state

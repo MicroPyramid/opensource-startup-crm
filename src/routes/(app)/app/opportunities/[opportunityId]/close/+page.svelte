@@ -2,14 +2,13 @@
   import { Check, X, Calendar, FileText } from '@lucide/svelte';
   import { enhance } from '$app/forms';
   
-  export let data;
-  export let form;
+  let { data, form } = $props();
   
   let opportunity = data.opportunity;
-  let isSubmitting = false;
-  let selectedStatus = 'CLOSED_WON';
-  let closeDate = new Date().toISOString().split('T')[0];
-  let closeReason = '';
+  let isSubmitting = $state(false);
+  let selectedStatus = $state('CLOSED_WON');
+  let closeDate = $state(new Date().toISOString().split('T')[0]);
+  let closeReason = $state('');
 
   const statusOptions = [
     { value: 'CLOSED_WON', label: 'Closed Won', color: 'text-green-600' },

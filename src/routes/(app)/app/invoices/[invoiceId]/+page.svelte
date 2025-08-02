@@ -1,9 +1,8 @@
 <script>
-  /** @type {import('./$types').PageData} - for external reference */
-  export let data;
+  let { data } = $props();
 
   // Use actual invoice data from server
-  $: invoice = data.invoice;
+  let invoice = $derived(data.invoice);
 
   /**
    * @param {number} amount

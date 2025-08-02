@@ -23,7 +23,7 @@
     } from '@lucide/svelte';
     import { goto } from '$app/navigation';
     import { enhance } from '$app/forms';
-    import { page } from '$app/stores';
+    import { page } from '$app/state';
 
     /** @type {{ data: import('./$types').PageData, form?: any }} */
     let { data, form } = $props();
@@ -560,7 +560,7 @@
                             if (result.type === 'success') {
                                 closeDeleteModal();
                                 // Use goto with replaceState and invalidateAll for a clean refresh
-                                await goto($page.url.pathname, { 
+                                await goto(page.url.pathname, { 
                                     replaceState: true, 
                                     invalidateAll: true 
                                 });

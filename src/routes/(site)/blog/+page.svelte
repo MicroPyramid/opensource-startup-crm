@@ -1,8 +1,8 @@
 <script>
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import { goto } from '$app/navigation';
   
-  export let data;
+  let { data } = $props();
   
   // Destructure the data with proper type checking
   const posts = data.posts || [];
@@ -48,7 +48,7 @@
   function changePage(newPage) {
     if (newPage < 1 || newPage > pagination.totalPages) return;
     
-    const params = new URLSearchParams($page.url.searchParams);
+    const params = new URLSearchParams(page.url.searchParams);
     params.set('page', newPage.toString());
     goto(`?${params.toString()}`);
   }

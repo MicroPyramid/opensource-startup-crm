@@ -1,14 +1,14 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { X, Calendar, User, Building, FileText, Flag, Clock } from '@lucide/svelte';
 
 	/** @type {{ data: import('./$types').PageData, form?: import('./$types').ActionData }} */
 	let { data, form } = $props();
 
 	// Get accountId from URL parameters
-	const urlAccountId = $page.url.searchParams.get('accountId');
+	const urlAccountId = page.url.searchParams.get('accountId');
 
 	// Initialize form fields. If 'form' (from a failed action) exists, use its values.
 	// Otherwise, use defaults. These are bound to the inputs.

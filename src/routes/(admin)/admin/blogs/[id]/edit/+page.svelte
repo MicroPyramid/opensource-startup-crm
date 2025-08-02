@@ -1,11 +1,11 @@
 <script>
   import { dndzone } from "svelte-dnd-action";
   /** @type {{ data: import('./$types').PageData }} */
-  export let data;
+  let { data } = $props();
   /** @type {any} */
-  let blog = /** @type {any} */ (data)?.blog || {};
+  let blog = $state(/** @type {any} */ (data)?.blog || {});
   /** @type {any[]} */
-  let contentBlocks = blog?.contentBlocks || []
+  let contentBlocks = $state(blog?.contentBlocks || [])
 
   // Drag and drop handler for reordering content blocks
   async function handleReorder(/** @type {any} */ { detail }) {
@@ -25,17 +25,17 @@
     // location.reload();
   }
 
-  let message = "";
+  let message = $state("");
 
   // For editing/adding content blocks
   /** @type {any} */
-  let editingBlockId = null;
-  let newBlock = {
+  let editingBlockId = $state(null);
+  let newBlock = $state({
     type: "MARKDOWN",
     content: "",
     displayOrder: contentBlocks.length + 1,
     draft: false,
-  };
+  });
 
   function startEditBlock(/** @type {any} */ block) {
     editingBlockId = block.id;
@@ -61,16 +61,16 @@
 			.replace(/\s+/g, '-')
 			.replace(/[^\w-]+/g, '');
 	}
-  let editable_title = blog?.title || '';
-  let slug = blog?.slug || '';
+  let editable_title = $state(blog?.title || '');
+  let slug = $state(blog?.slug || '');
 
 
   // Initialize previous_editable_title_for_slug_generation to undefined
   // so we can detect the first run of the reactive block.
   /** @type {any} */
-  let previous_editable_title_for_slug_generation = undefined;
+  let previous_editable_title_for_slug_generation = $state(undefined);
 
-  $: {
+  $effect(() => {
     // This block runs when editable_title changes (including its initial assignment).
     if (previous_editable_title_for_slug_generation === undefined && editable_title !== undefined) {
       // First run: editable_title has been initialized.
@@ -84,7 +84,7 @@
       slug = make_slug(editable_title);
       previous_editable_title_for_slug_generation = editable_title;
     }
-  }
+  });
 </script>
 
 <div class="max-w-5xl mx-auto mt-10 p-8 bg-white rounded-lg shadow">

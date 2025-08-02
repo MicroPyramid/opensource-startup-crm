@@ -3,25 +3,21 @@
   import { goto } from '$app/navigation';
   import { Save, X, Plus, Trash2 } from '@lucide/svelte';
 
-  /** @type {import('./$types').ActionData} - for external reference */
-  export const form = /** @type {any} */ (undefined);
-  
-  /** @type {import('./$types').PageData} */
-  export let data;
+  let { data } = $props();
 
-    let lineItems = [
+  let lineItems = $state([
     { id: 1, description: 'Consulting Services', quantity: 10, rate: 100, total: 1000 },
     { id: 2, description: 'Setup Fee', quantity: 1, rate: 500, total: 500 }
-  ];
+  ]);
 
-  let formData = {
+  let formData = $state({
     invoiceNumber: 'INV-0001',
     accountId: '',
     invoiceDate: new Date().toISOString().split('T')[0],
     dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 14 days from now
     status: 'DRAFT',
     notes: 'Thank you for your business!'
-  };
+  });
 
   function addLineItem() {
     const newId = Math.max(...lineItems.map(item => item.id), 0) + 1;
@@ -54,8 +50,8 @@
     lineItems = [...lineItems]; // Trigger reactivity
   }
 
-  $: subtotal = lineItems.reduce((sum, item) => sum + item.total, 0);
-  $: grandTotal = subtotal; // Can add tax logic later
+  let subtotal = $derived(lineItems.reduce((sum, item) => sum + item.total, 0));
+  let grandTotal = $derived(subtotal); // Can add tax logic later
 </script>
 
 <!-- Super Rich Invoice Creation Page - Uniform Blue-Purple Theme -->

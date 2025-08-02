@@ -1,11 +1,11 @@
 <script>
-  export let data;
+  let { data } = $props();
   let account = data.account;
-  let name = account.name;
-  let industry = account.industry || '';
-  let type = account.type || '';
-  let website = account.website || '';
-  let phone = account.phone || '';
+  let name = $state(account.name);
+  let industry = $state(account.industry || '');
+  let type = $state(account.type || '');
+  let website = $state(account.website || '');
+  let phone = $state(account.phone || '');
 </script>
 
 <div class="max-w-xl mx-auto mt-8 p-6 bg-white dark:bg-gray-800 rounded shadow">

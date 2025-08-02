@@ -1,13 +1,13 @@
 <script lang="ts">
-  export let data;
+  let { data } = $props();
   import { enhance } from '$app/forms';
   import { goto } from '$app/navigation';
   import { Save, X, AlertTriangle, User, Building, Calendar, Flag, FileText, Lock, Unlock } from '@lucide/svelte';
 
-  let title = data.caseItem.subject;
-  let description = data.caseItem.description || '';
-  let accountId = data.caseItem.accountId;
-  let dueDate = '';
+  let title = $state(data.caseItem.subject);
+  let description = $state(data.caseItem.description || '');
+  let accountId = $state(data.caseItem.accountId);
+  let dueDate = $state('');
   if (data.caseItem.dueDate) {
     const dueDateValue: any = data.caseItem.dueDate;
     if (typeof dueDateValue === 'string') {
@@ -16,13 +16,13 @@
       dueDate = dueDateValue.toISOString().split('T')[0];
     }
   }
-  let assignedId = data.caseItem.ownerId;
-  let priority = data.caseItem.priority || 'Medium';
-  let errorMsg = '';
-  let successMsg = '';
-  let loading = false;
-  let showCloseConfirmation = false;
-  let showReopenConfirmation = false;
+  let assignedId = $state(data.caseItem.ownerId);
+  let priority = $state(data.caseItem.priority || 'Medium');
+  let errorMsg = $state('');
+  let successMsg = $state('');
+  let loading = $state(false);
+  let showCloseConfirmation = $state(false);
+  let showReopenConfirmation = $state(false);
 
   function handleCloseCase() {
     showCloseConfirmation = true;

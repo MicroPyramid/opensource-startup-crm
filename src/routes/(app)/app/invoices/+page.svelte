@@ -1,6 +1,6 @@
 <script>
   /** @type {import('./$types').PageData} - for external reference */
-  export let data;
+  let { data } = $props();
 
   /**
    * @param {string} status

@@ -1,6 +1,6 @@
 <script>
 	import { afterNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import imgLogo from '$lib/assets/images/logo.png';
 	import { 
 		LayoutDashboard, 
@@ -79,7 +79,7 @@
 		}
 	});
 
-	let mainSidebarUrl = $derived($page.url.pathname);
+	let mainSidebarUrl = $derived(page.url.pathname);
 	/** @type {{ [key: string]: boolean }} */
 	let openDropdowns = $state({});
 

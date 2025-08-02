@@ -1,6 +1,6 @@
 <script>
     import { goto } from '$app/navigation';
-    import { page } from '$app/stores';
+    import { page } from '$app/state';
     import { enhance } from '$app/forms';
     import { 
         Search, 
@@ -29,7 +29,7 @@
 
     // Search functionality
     function handleSearch() {
-        const params = new URLSearchParams($page.url.searchParams);
+        const params = new URLSearchParams(page.url.searchParams);
         if (searchQuery) {
             params.set('search', searchQuery);
         } else {
@@ -41,7 +41,7 @@
 
     // Filter functionality
     function applyFilters() {
-        const params = new URLSearchParams($page.url.searchParams);
+        const params = new URLSearchParams(page.url.searchParams);
         if (selectedOwner) {
             params.set('owner', selectedOwner);
         } else {
@@ -60,7 +60,7 @@
     // Pagination
     /** @param {number} pageNum */
     function goToPage(pageNum) {
-        const params = new URLSearchParams($page.url.searchParams);
+        const params = new URLSearchParams(page.url.searchParams);
         params.set('page', pageNum.toString());
         goto(`?${params.toString()}`);
     }

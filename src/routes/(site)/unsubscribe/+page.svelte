@@ -2,14 +2,14 @@
   import { enhance } from '$app/forms';
   import { onMount } from 'svelte';
   
-  /** @type {import('./$types').PageData} */
-  export let data;
+  /** @type {{ data: import('./$types').PageData }} */
+  let { data } = $props();
   
-  let unsubscribeForm;
+  let unsubscribeForm = $state();
   /** @type {string} */
-  let message = '';
-  let showMessage = false;
-  let isSuccess = false;
+  let message = $state('');
+  let showMessage = $state(false);
+  let isSuccess = $state(false);
 </script>
 
 <svelte:head>

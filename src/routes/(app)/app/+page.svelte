@@ -14,10 +14,10 @@
     } from '@lucide/svelte';
     
     /** @type {any} */
-    export let data;
+    let { data } = $props();
     
-    $: metrics = data.metrics || {};
-    $: recentData = data.recentData || {};
+    let metrics = $derived(data.metrics || {});
+    let recentData = $derived(data.recentData || {});
     
     function formatCurrency(/** @type {any} */ amount) {
         return new Intl.NumberFormat('en-US', {

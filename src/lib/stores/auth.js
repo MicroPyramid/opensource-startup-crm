@@ -1,6 +1,7 @@
 // src/lib/stores/auth.js
 import { writable } from 'svelte/store';
 
+// Create a reactive state object for authentication
 export const auth = writable({
   isAuthenticated: false,
   user: null,

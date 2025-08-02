@@ -1,22 +1,22 @@
 <script>
   import { DollarSign, Calendar, Target, TrendingUp, FileText, User, Building, ArrowLeft, Save, X } from '@lucide/svelte';
   
-  export let data;
-  let opportunity = { ...data.opportunity };
-  let error = '';
-  let isSubmitting = false;
+  let { data } = $props();
+  let opportunity = $state({ ...data.opportunity });
+  let error = $state('');
+  let isSubmitting = $state(false);
   
-  let closeDateStr = opportunity.closeDate
+  let closeDateStr = $state(opportunity.closeDate
     ? new Date(opportunity.closeDate).toISOString().slice(0, 10)
-    : '';
+    : '');
   
-  $: {
+  $effect(() => {
     if (closeDateStr) {
       opportunity.closeDate = new Date(closeDateStr);
     } else {
       opportunity.closeDate = null;
     }
-  }
+  });
 
   /**
    * @param {SubmitEvent} e

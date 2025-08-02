@@ -17,7 +17,7 @@
     Award
   } from '@lucide/svelte';
   
-  export let data;
+  let { data } = $props();
   let opportunity = data.opportunity;
   let account = data.account;
   let owner = data.owner;

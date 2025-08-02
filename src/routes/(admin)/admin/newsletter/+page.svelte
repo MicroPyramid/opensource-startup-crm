@@ -2,8 +2,8 @@
   import { onMount } from 'svelte';
   import { Mail, Users, TrendingUp, UserCheck, Calendar } from '@lucide/svelte';
   
-  /** @type {import('./$types').PageData} */
-  export let data;
+  /** @type {{ data: import('./$types').PageData }} */
+  let { data } = $props();
   
   // Format date helper
   function formatDate(/** @type {any} */ dateString) {

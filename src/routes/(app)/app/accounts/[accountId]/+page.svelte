@@ -20,26 +20,24 @@
     Send
   } from '@lucide/svelte';
 
-  /** @type {any} */
-  export let data;
-  /** @type {any} */
-  export let form;
+  /** @type {{ data: any, form: any }} */
+  let { data, form } = $props();
 
   const { account, contacts, opportunities = [], tasks, cases } = data;
-  let comments = data.comments;
+  let comments = $state(data.comments);
 
   // Form state
-  let showCloseModal = false;
-  let closureReason = '';
-  let closeError = '';
+  let showCloseModal = $state(false);
+  let closureReason = $state('');
+  let closeError = $state('');
 
   // Comment functionality
-  let newComment = '';
-  let isSubmittingComment = false;
-  let commentError = '';
+  let newComment = $state('');
+  let isSubmittingComment = $state(false);
+  let commentError = $state('');
 
   // Active tab state
-  let activeTab = 'contacts';
+  let activeTab = $state('contacts');
 
   async function submitComment() {
     commentError = '';
@@ -127,11 +125,11 @@
   }
 
   // Handle form submission errors
-  $: {
+  $effect(() => {
     if (form?.success === false) {
       closeError = form.message;
     }
-  }
+  });
 </script>
 
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900">

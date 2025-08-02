@@ -22,18 +22,18 @@
   } from '@lucide/svelte';
   
   // Get leads from the data prop passed from the server
-  export let data;
+  let { data } = $props();
   const { leads } = data;
   
   // State management
-  let searchQuery = '';
-  let statusFilter = 'ALL';
-  let sourceFilter = 'ALL';
-  let ratingFilter = 'ALL';
-  let sortBy = 'createdAt';
-  let sortOrder = 'desc';
-  let isLoading = false;
-  let showFilters = false;
+  let searchQuery = $state('');
+  let statusFilter = $state('ALL');
+  let sourceFilter = $state('ALL');
+  let ratingFilter = $state('ALL');
+  let sortBy = $state('createdAt');
+  let sortOrder = $state('desc');
+  let isLoading = $state(false);
+  let showFilters = $state(false);
   
   // Available statuses for filtering
   const statuses = [
@@ -134,7 +134,7 @@
   }
   
   // Computed filtered and sorted leads
-  $: filteredLeads = leads.filter(lead => {
+  let filteredLeads = $derived(leads.filter(lead => {
     const matchesSearch = searchQuery === '' || 
       getFullName(lead).toLowerCase().includes(searchQuery.toLowerCase()) ||
       (lead.company && lead.company.toLowerCase().includes(searchQuery.toLowerCase())) ||
@@ -158,7 +158,7 @@
     } else {
       return aValue < bValue ? 1 : -1;
     }
-  });
+  }));
   
   // Function to toggle sort order
   /**

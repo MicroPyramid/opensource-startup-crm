@@ -5,7 +5,7 @@
     import { browser } from '$app/environment';
     
     // Get the data from the server load function
-    export let data;
+    let { data } = $props();
     const { orgs } = data;
     
     // Function to handle organization selection

@@ -4,15 +4,15 @@
   import { fly } from 'svelte/transition';
   import { ArrowLeft, Save, X, User, Building, Mail, Phone, Calendar, Star, Target, AlertCircle } from '@lucide/svelte';
 
-  export let data;
+  let { data } = $props();
   
   let { lead, users } = data;
-  let isSubmitting = false;
-  let formSubmitted = false;
-  let errorMessage = '';
+  let isSubmitting = $state(false);
+  let formSubmitted = $state(false);
+  let errorMessage = $state('');
 
   // Form validation
-  let errors: Record<string, string> = {};
+  let errors: Record<string, string> = $state({});
   
   function validateForm(formData: FormData) {
     errors = {};

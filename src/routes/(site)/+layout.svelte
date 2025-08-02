@@ -1,6 +1,5 @@
 <script>
   import { page } from '$app/state';
-  import { onMount } from 'svelte';
   import '../../app.css';
   import logo from '$lib/assets/images/logo.png';
   import { 
@@ -17,14 +16,15 @@
     Linkedin
   } from '@lucide/svelte';
   import { enhance } from '$app/forms';
+  let { children } = $props();
 
-  let isMenuOpen = false;
-  let scrollY = 0;
+  let isMenuOpen = $state(false);
+  let scrollY = $state(0);
   /** @type {HTMLFormElement} */
   let newsletterForm;
   /** @type {string} */
-  let newsletterMessage = '';
-  let showNewsletterMessage = false;
+  let newsletterMessage = $state('');
+  let showNewsletterMessage = $state(false);
   
   // Toggle mobile menu
   function toggleMenu() {
@@ -32,16 +32,18 @@
   }
   
   // Close mobile menu when route changes
-  $: if (page.url.pathname) {
-    isMenuOpen = false;
-  }
+  $effect(() => {
+    if (page.url.pathname) {
+      isMenuOpen = false;
+    }
+  });
   
   // Handle scroll for navbar transparency
-  $: navbarClass = scrollY > 10 
+  let navbarClass = $derived(scrollY > 10 
     ? 'bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-200/50' 
-    : 'bg-white/80 backdrop-blur-sm shadow-md';
+    : 'bg-white/80 backdrop-blur-sm shadow-md');
   
-  onMount(() => {
+  $effect(() => {
     const handleScroll = () => scrollY = window.scrollY;
     window.addEventListener('scroll', handleScroll);
     
@@ -232,7 +234,7 @@
 
   <!-- Page content with top padding for fixed nav -->
   <main class="flex-grow pt-16">
-    <slot />
+    {@render children()}
   </main>
 
   <!-- Enhanced Footer with better SEO -->

@@ -1,7 +1,7 @@
 <script>
   import { marked } from 'marked';
   
-  export let data;
+  let { data } = $props();
 
   const { post } = data;
 

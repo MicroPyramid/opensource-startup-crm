@@ -23,39 +23,43 @@
   } from '@lucide/svelte';
 
   // Form data - now handled by server
-  let formData = {
+  let formData = $state({
     name: '',
     email: '',
     serviceType: '',
     message: ''
-  };
+  });
 
   // Form state
-  let isSubmitting = false;
-  let mounted = false;
+  let isSubmitting = $state(false);
+  let mounted = $state(false);
 
   // Get form data from server response
-  export let form;
+  let { form } = $props();
 
   // Update formData if server returns validation errors
-  $: if (form && !form.success) {
-    formData = {
-      name: form.name || '',
-      email: form.email || '',
-      serviceType: form.serviceType || '',
-      message: form.message || ''
-    };
-  }
+  $effect(() => {
+    if (form && !form.success) {
+      formData = {
+        name: form.name || '',
+        email: form.email || '',
+        serviceType: form.serviceType || '',
+        message: form.message || ''
+      };
+    }
+  });
 
   // Reset form on successful submission
-  $: if (form?.success) {
-    formData = {
-      name: '',
-      email: '',
-      serviceType: '',
-      message: ''
-    };
-  }
+  $effect(() => {
+    if (form?.success) {
+      formData = {
+        name: '',
+        email: '',
+        serviceType: '',
+        message: ''
+      };
+    }
+  });
 
   onMount(() => {
     mounted = true;

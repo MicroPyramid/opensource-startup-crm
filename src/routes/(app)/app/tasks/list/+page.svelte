@@ -1,7 +1,7 @@
 <script>
   import { Plus, Calendar, User, Building2, Edit3, Trash2, Clock, AlertCircle, CheckCircle2, PlayCircle, Pause, XCircle } from '@lucide/svelte';
   
-  export let data;
+  let { data } = $props();
 
   /**
    * Format date for display
