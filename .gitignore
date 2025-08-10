@@ -1,27 +1,14 @@
+dist
 node_modules
-
-# Output
-.output
-.vercel
-.netlify
+CLAUDE.md
+.cursor
+.vscode
+.idea
 .wrangler
-/.svelte-kit
-/build
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Env
+.svelte-kit
+build
+.dev.vars
 .env
-.env.*
-!.env.example
-!.env.test
-
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
-
-generated/*
-src/generated/*
-.github/prompts/*
+.claude
+local-state
+.turbo/

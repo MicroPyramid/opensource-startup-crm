@@ -1,0 +1,31 @@
+{
+	"name": "@opensource-startup-crm/constants",
+	"version": "1.0.0",
+	"description": "Shared enums, options, and lookups for the CRM",
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"types": "dist/index.d.mts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.mts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		},
+		"./src/*": {
+			"types": "./src/*.ts",
+			"import": "./src/*.ts"
+		}
+	},
+	"files": [
+		"dist/**",
+		"src/**"
+	],
+	"scripts": {
+		"build": "rm -rf dist && tsup"
+	},
+	"devDependencies": {
+		"tsup": "^8.5.0",
+		"typescript": "^5.8.3",
+		"@types/node": "^20.14.10"
+	}
+}

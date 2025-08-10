@@ -1,0 +1,34 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "opensource-startup-crm-web",
+	"compatibility_date": "2025-07-21",
+	"compatibility_flags": ["nodejs_compat"],
+	"preview_urls": true,
+	"workers_dev": true,
+	"main": ".svelte-kit/cloudflare/_worker.js",
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".svelte-kit/cloudflare"
+	},
+	"observability": {
+		"enabled": true
+	},
+	"vars": {
+		"ENV_TYPE": "prod",
+		"BASE_URL": "https://opensource-startup-crm-web.your-account.workers.dev",
+		"GOOGLE_CLIENT_ID": "",
+		"GOOGLE_CLIENT_SECRET": "",
+		"BETTER_AUTH_SECRET": ""
+	},
+	"hyperdrive": [
+		{
+			"binding": "HYPERDRIVE",
+			"id": "52ba0f65aa1349948a4638184c3c7f40",
+			"localConnectionString": "postgresql://postgres:postgres@localhost:54322/postgres"
+		}
+	]
+}

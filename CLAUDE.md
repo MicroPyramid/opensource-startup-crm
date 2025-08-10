@@ -4,132 +4,175 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-BottleCRM is a SaaS CRM platform built with SvelteKit, designed for startups and enterprises with role-based access control (RBAC). The application features multi-tenancy through organizations, with strict data isolation enforced at the database level.
+BottleCRM is a multi-tenant SaaS CRM platform built as a monorepo with SvelteKit, designed for startups and enterprises with role-based access control (RBAC). The application features organization-based multi-tenancy with strict data isolation enforced at the database level.
 
 ## Technology Stack
 
-- **Frontend**: SvelteKit 2.x with Svelte 5.x
+- **Frontend**: SvelteKit 2.x with Svelte 5.x (TypeScript)
 - **Styling**: TailwindCSS 4.x
-- **Database**: PostgreSQL with Prisma ORM
+- **Database**: PostgreSQL with Drizzle ORM
+- **Authentication**: Better Auth with organization plugin
 - **Icons**: Lucide Svelte
 - **Validation**: Zod
-- **Package Manager**: pnpm
-- **Type Checking**: JSDoc style type annotations (no TypeScript)
+- **Package Manager**: pnpm (v10.0.0)
+- **Build Tool**: Turbo (monorepo management)
+- **Deployment**: Cloudflare Workers/Pages
+
+## Monorepo Structure
+
+```
+├── apps/
+│   ├── web/          # SvelteKit frontend application
+│   └── api/          # Node.js API service (optional)
+├── shared/
+│   ├── database/     # Drizzle ORM schema and migrations
+│   └── constants/    # Shared constants across apps
+└── supabase/         # Supabase configuration (if used)
+```
 
 ## Development Commands
 
+### Monorepo Root Commands
 ```bash
-# Development server
+# Install dependencies
+pnpm install
+
+# Development (all apps)
 pnpm run dev
 
-# Build for production
+# Build (all apps)
 pnpm run build
 
-# Preview production build
-pnpm run preview
+# Web app specific
+pnpm run web:dev
+pnpm run web:build
+pnpm run web:preview
 
+# API app specific
+pnpm run api:dev
+pnpm run api:build
+```
+
+### Database Commands
+```bash
+# Generate SQL and types
+pnpm run db:generate
+
+# Run migrations (local)
+pnpm run db:migrate:local
+
+# Run migrations (production)
+pnpm run db:migrate:prod
+
+# Generate, migrate, build in one command (local)
+pnpm run db:gmb:local
+
+# Database studio UI
+pnpm run db:studio
+```
+
+### Web App Commands (from apps/web/)
+```bash
 # Type checking
 pnpm run check
-
-# Type checking with watch mode
 pnpm run check:watch
 
-# Linting and formatting (both required to pass)
+# Linting and formatting
 pnpm run lint
-
-# Format code
 pnpm run format
-
-# Database operations
-npx prisma migrate dev
-npx prisma generate
-npx prisma studio
 ```
 
 ## Architecture Overview
 
 ### Multi-Tenant Structure
-- **Organizations**: Top-level tenant containers with strict data isolation
-- **Users**: Can belong to multiple organizations with different roles (ADMIN/USER)
-- **Super Admin**: Users with @micropyramid.com email domain have platform-wide access
+- **Organizations**: Top-level tenant containers with complete data isolation
+- **Members**: Users belong to organizations with specific roles (member/admin)
+- **Sessions**: Track active organization via `activeOrganizationId`
+- **Super Admin**: Platform-wide access (determined by business logic, not email domain)
 
 ### Core CRM Entities
 - **Leads**: Initial prospects that can be converted to Accounts/Contacts/Opportunities
-- **Accounts**: Company/organization records
+- **Accounts** (`crm_account`): Company/organization records
 - **Contacts**: Individual people associated with accounts
-- **Opportunities**: Sales deals with pipeline stages
-- **Tasks/Events**: Activity management
-- **Cases**: Customer support tickets
-- **Products/Quotes**: Sales catalog and quotation system
+- **Opportunities**: Sales deals with pipeline stages and forecast categories
+- **Tasks/Events**: Activity management linked to various entities
+- **Cases**: Customer support tickets with priority and status tracking
+- **Products/Quotes**: Product catalog and professional quotation system
 
 ### Authentication & Authorization
-- Session-based authentication using cookies (`session`, `org`, `org_name`)
-- Organization selection required after login via `/org` route
-- Route protection in `src/hooks.server.js`:
+- **Better Auth**: Session-based authentication with JWT plugin support
+- **Organization Context**: Active organization stored in session (`activeOrganizationId`)
+- **Route Protection** in `apps/web/src/hooks.server.ts`:
   - `/app/*` routes require authentication and organization membership
-  - `/admin/*` routes restricted to @micropyramid.com domain users
-  - `/org` route for organization selection
+  - `/admin/*` routes require authentication (additional checks in route logic)
+  - `/org` route for organization selection post-login
+- **Database Integration**: Drizzle adapter for Better Auth tables
 
 ### Data Access Control
-- All database queries must include organization filtering
-- User can only access data from organizations they belong to
-- Prisma schema enforces relationships with `organizationId` foreign keys
+- All CRM queries must filter by `organizationId`
+- Organization membership verified through `member` table
+- Strict foreign key constraints enforce data integrity
+- Audit logging tracks all data modifications
 
 ### Route Structure
 - `(site)`: Public marketing pages
-- `(no-layout)`: Auth pages (login, org selection)
-- `(app)`: Main CRM application (requires auth + org membership)
-- `(admin)`: Platform administration (requires @micropyramid.com email)
+- `(no-layout)`: Authentication pages (login, org selection)
+- `(app)`: Main CRM application (requires auth + active org)
+- `(admin)`: Platform administration
 
 ### Key Files
-- `src/hooks.server.js`: Authentication, org membership validation, route protection
-- `src/lib/prisma.js`: Database client configuration
-- `src/lib/stores/auth.js`: Authentication state management
-- `prisma/schema.prisma`: Complete database schema with RBAC models
+- `apps/web/src/hooks.server.ts`: Authentication setup and route guards
+- `apps/web/src/lib/auth.ts`: Better Auth configuration
+- `shared/database/src/schema/`: Database schema definitions
+  - `base.ts`: Authentication tables (user, session, organization, member)
+  - `app.ts`: CRM-specific tables
+  - `enums.ts`: PostgreSQL enums for type safety
+
+## Environment Configuration
+
+### Local Development (.dev.vars)
+Create `apps/web/.dev.vars` for local development:
+```env
+DATABASE_URL="postgresql://postgres:password@localhost:5432/bottlecrm?schema=public"
+BASE_URL="http://localhost:5173"
+GOOGLE_CLIENT_ID=""
+GOOGLE_CLIENT_SECRET=""
+```
+
+### Production (wrangler.jsonc)
+Configure in `apps/web/wrangler.jsonc` under `vars` section or use Cloudflare Secrets.
+
+## Database Schema Patterns
+
+### Entity Conventions
+- Primary keys: `id` (UUID via `randomUUID()`)
+- Timestamps: `createdAt`, `updatedAt` with defaults
+- Soft deletes: `isDeleted`, `deletedAt`, `deletedById`
+- Organization scoping: `organizationId` foreign key
+- Owner tracking: `ownerId` references user
+
+### Enum Usage
+All enums defined in `shared/database/src/schema/enums.ts`:
+- `leadStatus`, `leadSource`
+- `opportunityStage`, `opportunityType`
+- `taskStatus`, `taskPriority`
+- `caseStatus`, `quoteStatus`
+- Industry, rating, and other business enums
 
 ## Form Development
-- All form labels must be properly associated with form controls for accessibility
-- Use Zod for form validation
-- Follow existing patterns in `/contacts`, `/leads`, `/accounts` for consistency
+- Use proper TypeScript types for form data
+- Implement Zod schemas for validation
+- Ensure all form controls have associated labels
+- Follow existing patterns in the codebase
 
-## Coding Standards
-
-### Type Safety
-- **NO TypeScript**: This project uses JavaScript with JSDoc style type annotations only
-- **JSDoc Comments**: Use JSDoc syntax for type information and documentation
-- **Type Checking**: Use `pnpm run check` to validate types via JSDoc annotations
-- **Function Parameters**: Document parameter types using JSDoc `@param` tags
-- **Return Types**: Document return types using JSDoc `@returns` tags
-
-### JSDoc Examples
-```javascript
-/**
- * Updates a contact in the database
- * @param {string} contactId - The contact identifier
- * @param {Object} updateData - The data to update
- * @param {string} updateData.name - Contact name
- * @param {string} updateData.email - Contact email
- * @param {string} organizationId - Organization ID for data isolation
- * @returns {Promise<Object>} The updated contact object
- */
-async function updateContact(contactId, updateData, organizationId) {
-  // Implementation
-}
-
-/**
- * @typedef {Object} User
- * @property {string} id - User ID
- * @property {string} email - User email
- * @property {string} name - User name
- * @property {string[]} organizationIds - Array of organization IDs
- */
-
-/** @type {User|null} */
-let currentUser = null;
-```
+## Testing Strategy
+- Run `pnpm run check` before committing
+- Ensure `pnpm run lint` passes
+- Build verification with `pnpm run build`
 
 ## Security Requirements
 - Never expose cross-organization data
-- Always filter queries by user's organization membership
-- Validate user permissions before any data operations
-- Use parameterized queries via Prisma to prevent SQL injection
+- Always include `organizationId` in queries
+- Validate organization membership before data access
+- Use Drizzle's parameterized queries
+- Audit sensitive operations

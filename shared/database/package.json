@@ -1,0 +1,55 @@
+{
+	"name": "@opensource-startup-crm/database",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.mts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.cjs"
+		},
+		"./src/*": {
+			"types": "./src/*.ts",
+			"import": "./src/*.ts"
+		}
+	},
+	"types": "./dist/index.d.mts",
+	"files": [
+		"dist/**",
+		"src/**",
+		"local-state/**"
+	],
+	"scripts": {
+		"build": "rm -rf dist && tsup && cp -r migrations dist/migrations",
+		"db:generate": "drizzle-kit generate && pnpm build",
+		"db:migrate:local": "NODE_ENV=development drizzle-kit migrate",
+		"db:migrate:prod": "NODE_ENV=production drizzle-kit migrate",
+		"db:gmb:local": "pnpm db:generate && pnpm db:migrate:local && pnpm build",
+		"db:gmb:prod": "pnpm db:generate && pnpm db:migrate:prod && pnpm build",
+		"db:init:local": "cd ../.. && pnpm supabase:start && cd shared/database && pnpm db:generate && pnpm db:migrate:local && pnpm seed:admin",
+		"db:init:prod": "pnpm db:generate && pnpm db:migrate:prod && pnpm seed:sso",
+		"seed:sso": "node scripts/seed-sso.js",
+		"seed:admin": "node scripts/seed-admin.js",
+		"clean": "rm -rf node_modules && rm -rf dist",
+		"db:studio": "drizzle-kit studio"
+	},
+	"dependencies": {
+		"@neondatabase/serverless": "^1.0.1",
+		"postgres": "^3.4.7",
+		"@opensource-startup-crm/constants": "workspace:*"
+	},
+	"peerDependencies": {
+		"drizzle-orm": "0.44.3"
+	},
+	"devDependencies": {
+		"@types/node": "^24.1.0",
+		"dotenv": "^17.2.1",
+		"drizzle-kit": "^0.31.4",
+		"tsup": "^8.5.0",
+		"typescript": "^5.8.3"
+	}
+}
